@@ -117,9 +117,19 @@ decl_module! {
         #[weight = 10_000]
         pub fn my_transfer(origin,to: T::AccountId,value: Balance<T>) -> dispatch::DispatchResult{
           let who = ensure_signed(origin)?;
-          T::Currency::transfer(&who,&to,value,ExistenceRequirement::KeepAlive);
+          T::Currency::transfer(&who,&to,value,ExistenceRequirement::KeepAlive)?;
           <BalanceOf<T>>::insert(to, value);
           Ok(())
+        }
+
+        #[weight = 10_000]
+        pub fn intentinaly_error(orign,value:u16) -> dispatch::DispatchResult {
+            if value > 5{
+                Ok(())
+            }
+            else{
+                Err(Error::<T>::NoneValue)?
+            }
         }
     }
 }
